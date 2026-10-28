@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>보일 & 샤를 법칙</title>
+<style>
+:root{--bg:#f4f7fc;--card:#fff;--ink:#1d2433;--mut:#5c667a;--line:#d6dce8;--acc:#3b6df0;--acc2:#ff7a45;--room:#fffbe8;--glass:#9bb4d6;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161f;--card:#1c2230;--ink:#eef1f8;--mut:#a3adc2;--line:#33405a;--acc:#7aa2ff;--acc2:#ff9466;--room:#262b3a;--glass:#5a7396;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161f;--card:#1c2230;--ink:#eef1f8;--mut:#a3adc2;--line:#33405a;--acc:#7aa2ff;--acc2:#ff9466;--room:#262b3a;--glass:#5a7396;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;line-height:1.6}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.45rem;margin:4px 0 12px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.tab{flex:1 1 150px;padding:10px 12px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;font:inherit;font-weight:700;cursor:pointer}
+.tab.on{border-color:var(--acc);background:var(--acc);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.card h2{margin:0 0 6px;font-size:1.15rem}
+.card p{margin:0;color:var(--mut)}
+canvas{display:block;width:100%;height:auto;border-radius:12px;background:var(--card)}
+#cv{border:1px solid var(--line)}
+#ctl{margin:12px 0 4px}
+#ctl label{display:block;font-weight:700}
+input[type=range]{width:100%;accent-color:var(--acc2);height:32px}
+.btn{padding:10px 16px;border:0;border-radius:12px;background:var(--acc2);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.stats{flex:1 1 280px;display:grid;gap:8px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.stat small{display:block;color:var(--mut)}
+.stat b{font-size:1.3rem}
+.bar{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+#gr{width:300px;max-width:100%;border:1px solid var(--line)}
+.mis{border-left:5px solid var(--acc2)}
+.mis b{color:var(--acc2)}
+:root:root:root{--bg:#d8c39a;--paper:#fffdf6;--card:#fffdf6;--ink:#2b2a33;--mut:#5f5a4a;--line:#d9cfb4;--acc:#2f5fd0;--acc2:#e0553a;--room:#fff3a8;--glass:#9cb8d8;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:root:root:not([data-theme="light"]){--bg:#4a3f2d}}
+:root:root:root[data-theme="dark"]{--bg:#4a3f2d}
+body{background-image:radial-gradient(rgba(0,0,0,.08) 1px,transparent 1px);background-size:18px 18px}
+h1{display:inline-block;background:#fffdf6;border:2px solid #b8892b;border-left:10px solid var(--acc2);border-radius:4px;padding:6px 16px;box-shadow:2px 3px 0 rgba(0,0,0,.18);transform:rotate(-.6deg)}
+nav{gap:4px;margin-bottom:-2px;align-items:flex-end;position:relative;z-index:1;padding:0 6px}
+.tab{background:#f0cf85;color:#3a2e12;border:2px solid #b8892b;border-bottom:0;border-radius:10px 10px 0 0;padding:8px 10px 6px;flex:1 1 130px}
+.tab.on{background:var(--paper);color:#2b2a33;padding-top:13px}
+.card{position:relative;background:var(--paper);border:2px solid #b8892b;border-radius:4px 4px 8px 8px;padding-left:40px;box-shadow:2px 4px 0 rgba(0,0,0,.18)}
+.card::before{content:"";position:absolute;left:30px;top:0;bottom:0;width:2px;background:#e8837a;opacity:.7}
+.card::after{content:"";position:absolute;left:6px;top:0;bottom:0;width:16px;pointer-events:none;background:radial-gradient(circle at 8px 28px,var(--bg) 0 6px,transparent 7px) 0 0/16px 140px repeat-y}
+#cv{background-color:#fffdf6;background-image:linear-gradient(#e9dfc4 1px,transparent 1px),linear-gradient(90deg,#e9dfc4 1px,transparent 1px);background-size:20px 20px;border:2px solid #b8892b;border-radius:4px}
+.stats{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.stat:nth-child(3){display:none}
+.stat{background:#fff;border:1px solid #cfc5a7;border-top:6px solid var(--acc2);border-radius:3px;box-shadow:1px 2px 0 rgba(0,0,0,.1)}
+.bar{border:2px solid #b8892b;background:repeating-linear-gradient(90deg,transparent 0 11px,rgba(0,0,0,.18) 11px 12px),#ffe9a8;border-radius:3px;height:18px}
+.bar i{background:var(--acc2)}
+.btn{background:var(--acc);border:2px solid #1c3f93;border-radius:4px;box-shadow:2px 2px 0 rgba(0,0,0,.25)}
+.mis{background:#ffee70;border:0;border-radius:2px;padding-left:16px;transform:rotate(-.8deg);box-shadow:3px 5px 8px rgba(0,0,0,.25)}
+.mis::before,.mis::after{display:none}
+.mis p,.mis span{color:#3a3200}.mis b{color:#b3261e}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:22px;border-radius:4px;border:2px solid #b8892b;background:repeating-linear-gradient(90deg,transparent 0 9px,#b8892b 9px 10px),#ffd978}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:34px;margin-top:-8px;border-radius:4px;background:#e0453a;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.4)}
+input[type=range]::-moz-range-track{height:18px;border-radius:4px;border:2px solid #b8892b;background:repeating-linear-gradient(90deg,transparent 0 9px,#b8892b 9px 10px),#ffd978}
+input[type=range]::-moz-range-thumb{width:12px;height:30px;border-radius:4px;background:#e0453a;border:2px solid #fff}
+</style>
+</head>
+<body>
+<main>
+<h1>보일 &amp; 샤를 법칙</h1>
+<nav id="nav"></nav>
+<div class="card"><h2 id="ttl"></h2><p id="dsc"></p></div>
+<div class="card">
+<canvas id="cv"></canvas>
+<div id="ctl"></div>
+<div class="row" style="margin-top:12px">
+<div class="stats">
+<div class="stat"><small id="l1"></small><b id="s1"></b></div>
+<div class="stat"><small id="l2"></small><b id="s2"></b><div class="bar" style="margin-top:6px"><i id="pb"></i></div></div>
+<div class="stat"><small id="l3"></small><b id="s3"></b></div>
+</div>
+</div>
+</div>
+<div class="card mis"><p><b>🔍 관찰 미션</b><br><span id="mis"></span></p></div>
+</main>
+<script>
+const $=s=>document.querySelector(s),cv=$('#cv'),ctx=cv.getContext('2d');
+const CW=700,CH=400,FONT="'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif",dpr=Math.min(2,window.devicePixelRatio||1);
+cv.width=CW*dpr;cv.height=CH*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const TABS=[
+{k:'tube',n:'① 보일의 수은관',t:'1662년, 보일의 수은관 실험',
+d:'과학자 로버트 보일은 ‘J’ 모양 유리관의 짧은 쪽을 막아 공기를 가두고, 긴 쪽에 수은을 조금씩 부었어요. 수은이 무거워질수록 갇힌 공기는 더 세게 눌려 점점 작아졌지요. 수은 병을 마우스로 잡고 유리관 입구 위로 가져가 직접 부어 보세요!',
+m:'수은을 760 mm 높이만큼 부으면 공기를 누르는 힘(압력)이 2배가 되고, 공기 부피는 딱 절반이 돼요. 압력이 커지면 부피는 작아진다. 이게 보일의 법칙이에요!'},
+{k:'room',r:0,n:'② 사람들의 방',t:'사람들이 가득한 방',
+d:'모두 똑같은 빠르기로 돌아다니는 사람들이 방 안에 있어요. 사람들이 벽에 쿵! 부딪히는 힘이 바로 ‘압력’이에요. 오른쪽 벽의 손잡이를 마우스로 잡고 끌어서 방 크기를 바꿔 보세요. 주사기 피스톤을 누르는 것과 같아요. (사람들의 속도는 절대 변하지 않아요!)',
+m:'방이 좁아지면 같은 시간 동안 벽에 부딪히는 횟수가 늘어나서 압력이 커져요. 방을 절반으로 줄이면 압력이 약 2배가 되는지 확인해 보세요. 방을 넓히면 압력은 어떻게 될까요?'},
+{k:'room',r:1,n:'③ 사람 → 입자',t:'사람을 작은 입자로 바꿔 볼까요?',
+d:'공기 속 기체 입자는 눈에 보이지 않을 만큼 작지만, 사람들처럼 쉬지 않고 움직이며 벽에 부딪혀요. 버튼을 눌러 사람을 입자로 바꾼 뒤, 오른쪽 손잡이를 끌어 부피를 조절해 보세요. 입자의 속도는 항상 일정해요.',
+m:'입자가 되어도 똑같아요! 부피가 줄면 입자가 벽에 더 자주 부딪혀서 압력이 올라가요. 부피를 줄일 때 압력 게이지가 어떻게 변하는지 보세요.'},
+{k:'temp',n:'④ 온도와 부피',t:'뜨거워지면 상자가 커져요',
+d:'오른쪽 벽이 자유롭게 움직이는 상자예요. 바깥 공기가 벽을 일정한 힘으로 누르고 있어서 압력은 변하지 않아요. 온도 슬라이더를 움직여 보세요. 온도가 높아지면 입자가 빨라져서 벽을 더 세게 밀고, 벽이 밀려나며 상자가 커져요.',
+m:'온도를 올리면 입자가 빨개지고 빨라지며 벽이 밀려나 상자가 커져요. 압력 게이지는 계속 ‘보통’ 근처에 머물러요. 온도를 내리면 상자가 어떻게 변하는지도 확인해 보세요. 이게 샤를의 법칙이에요!'}];
+const SH=['#e0553a','#2f9e6e','#2f5fd0','#8e44ad','#f2a900','#16a2b8'],HR=['#3b2a1e','#111','#7a4b1e','#b5651d'],TOP=['..hhh..','.hhhhh.','.sssss.','.sssss.','..ccc..','.ccccc.','scccccs','..ppp..'],PX=TOP.concat(['..p.p..','..p.p..']),PX2=TOP.concat(['.p...p.','.p...p.']),BALL=['.XXX.','XXXXX','XwXXX','XXXXX','.XXX.'];
+function pix(c,rows,pal,x,y,s){rows.forEach((r,j)=>{for(let i=0;i<r.length;i++){const k=r[i];if(k!=='.'){c.fillStyle=pal[k];c.fillRect(Math.round(x+i*s),Math.round(y+j*s),s,s)}}})}
+let tab=0,S={},items=[],drag=false,off=0;
+const nav=$('#nav');
+TABS.forEach((t,i)=>{const b=document.createElement('button');b.className='tab';b.textContent=t.n;b.onclick=()=>setup(i);nav.appendChild(b)});
+
+function setup(i){
+ tab=i;const T=TABS[i];S={k:T.k,imp:0};items=[];
+ $('#ttl').textContent=T.t;$('#dsc').textContent=T.d;$('#mis').textContent=T.m;
+ document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',j==i));
+ cv.style.touchAction=T.k!=='temp'?'none':'auto';cv.style.cursor='default';
+ const ctl=$('#ctl');
+ if(T.k==='tube'){
+  S.dh=0;for(let j=0;j<12;j++)items.push({u:Math.random(),v:Math.random(),a:Math.random()*6.28});
+  ctl.innerHTML='<button class="btn" id="rb">수은 비우기 (처음으로)</button> <span style="color:var(--mut)">수은 병을 잡고 긴 유리관 입구 위로 가져가면 수은이 쏟아져요</span>';
+  $('#rb').onclick=()=>{S.dh=0};S.fx=600;S.fy=100;S.tilt=0;
+  $('#l1').textContent='갇힌 공기의 부피';$('#l2').textContent='공기를 누르는 압력';$('#l3').textContent='압력 × 부피 (거의 일정!)';
+ }else{
+  S.x0=20;S.y0=20;S.W0=480;S.H=T.k==='room'?360:300;S.wx=S.x0+S.W0;S.n=T.k==='room'?30:40;S.T=300;S.v=110;S.tau=1.2;
+  S.morph=S.target=T.k==='temp'?1:0;
+  S.P0=S.n*110*110/(2*S.W0*S.H);S.pe=S.P0*S.H*S.tau;
+  for(let j=0;j<S.n;j++){const a=Math.random()*6.283;items.push({x:S.x0+20+Math.random()*(S.W0-40),y:S.y0+20+Math.random()*(S.H-40),vx:110*Math.cos(a),vy:110*Math.sin(a),c:SH[j%6],h:HR[j%4]})}
+  if(T.k==='room'){
+   ctl.innerHTML=T.r?'<button class="btn" id="mb">⚛️ 사람을 입자로 바꾸기</button> <span style="color:var(--mut)">오른쪽 손잡이를 끌어 보세요</span>':'<span style="color:var(--mut)">👉 방의 오른쪽 손잡이를 마우스(또는 손가락)로 잡고 좌우로 끌어 보세요</span>';
+   if(T.r)$('#mb').onclick=()=>{S.target=1-S.target;$('#mb').textContent=S.target?'🧑 입자를 사람으로 바꾸기':'⚛️ 사람을 입자로 바꾸기'};
+   $('#l1').textContent='방의 부피';$('#l2').textContent='벽에 가해지는 압력 (처음 = 1.0)';$('#l3').textContent='압력 × 부피 (거의 일정!)';
+  }else{
+   ctl.innerHTML='<label>온도: <span id="vv">27</span> °C<input type="range" id="sl" min="-100" max="60" step="1" value="27"></label>';
+   $('#sl').oninput=e=>{const c=+e.target.value;S.T=c+273;(S.hist=S.hist||[]).push([performance.now(),S.T]);$('#vv').textContent=c;const nv=110*Math.sqrt(S.T/300);
+    for(const p of items){const s=Math.hypot(p.vx,p.vy);p.vx*=nv/s;p.vy*=nv/s}S.v=nv};
+   $('#l1').textContent='온도와 상자 크기';$('#l2').textContent='벽에 가해지는 압력 (처음 = 1.0)';$('#l3').textContent='비율: 압력 ÷ 온도 (처음 = 1.0)';
+  }
+ }
+ ui();
+}
+
+function stepRoom(dt){
+ if(S.k==='temp'){const h=S.hist||[],tn=performance.now()-2500;let Td=300;while(h.length>1&&h[1][0]<=tn)h.shift();if(h.length&&h[0][0]<=tn)Td=h[0][1];S.wx+=(S.x0+S.W0*Td/300-S.wx)*Math.min(1,dt*1.2)}const r=10-3*S.morph;S.morph+=(S.target-S.morph)*Math.min(1,dt*5);
+ for(const p of items){
+  p.x+=p.vx*dt;p.y+=p.vy*dt;
+  if(p.x<S.x0+r){p.x=S.x0+r;p.vx=Math.abs(p.vx)}
+  if(p.x>S.wx-r){p.x=S.wx-r;if(p.vx>0)S.imp+=2*p.vx;p.vx=-Math.abs(p.vx)}
+  if(p.y<S.y0+r){p.y=S.y0+r;p.vy=Math.abs(p.vy)}
+  if(p.y>S.y0+S.H-r){p.y=S.y0+S.H-r;p.vy=-Math.abs(p.vy)}
+ }
+ S.pe=S.pe*Math.exp(-dt/S.tau)+S.imp;S.imp=0;
+}
+function tubePour(dt){
+ const near=S.fx<545&&S.fy<130;
+ S.tilt+=((drag&&near?-1:0)-S.tilt)*Math.min(1,dt*8);
+ const sx=S.fx-30*Math.cos(S.tilt)+28*Math.sin(S.tilt),sy=S.fy-30*Math.sin(S.tilt)-28*Math.cos(S.tilt);
+ const P=760+S.dh,yR=165+95*760/P-S.dh*.23;
+ S.pour=S.tilt<-.7&&Math.abs(sx-450)<20&&sy<Math.min(yR-4,60)&&S.dh<760;
+ S.sx=sx;S.sy=sy;
+ if(S.pour)S.dh=Math.min(760,S.dh+140*dt);
+}
+function stepTube(dt){tubePour(dt);
+ for(const p of items){p.u+=Math.cos(p.a)*.8*dt;p.v+=Math.sin(p.a)*.8*dt;
+  if(p.u<0||p.u>1){p.a=Math.PI-p.a;p.u=Math.max(0,Math.min(1,p.u))}
+  if(p.v<0||p.v>1){p.a=-p.a;p.v=Math.max(0,Math.min(1,p.v))}}
+}
+
+function drawTube(){
+ const c=ctx,P=760+S.dh,air=95*760/P,yT=165,yL=yT+air,yR=yL-S.dh*.23,BX=350,BY=265,R=100;
+ const path=(a,b)=>{c.beginPath();c.moveTo(450,a);c.lineTo(450,BY);c.arc(BX,BY,R,0,Math.PI);c.lineTo(250,b)};
+ c.lineCap='butt';
+ path(30,yT);c.lineWidth=52;c.strokeStyle=css('--glass');c.stroke();
+ c.fillStyle=css('--glass');c.beginPath();c.arc(250,yT,26,0,7);c.fill();
+ path(30,yT);c.lineWidth=44;c.strokeStyle=css('--card');c.stroke();
+ c.fillStyle=css('--card');c.beginPath();c.arc(250,yT,22,0,7);c.fill();
+ c.fillStyle='rgba(110,170,255,.28)';c.fillRect(228,yT,44,air);c.beginPath();c.arc(250,yT,22,Math.PI,0);c.fill();
+ c.fillStyle=css('--acc');
+ for(const p of items){c.beginPath();c.arc(230+p.u*40,yT+4+p.v*(air-8),3,0,7);c.fill()}
+ path(yR,yL);c.lineWidth=44;c.strokeStyle='#9aa4b5';c.stroke();
+ c.setLineDash([5,5]);c.lineWidth=1.5;c.strokeStyle=css('--acc2');c.beginPath();c.moveTo(228,yL);c.lineTo(505,yL);c.moveTo(428,yR);c.lineTo(505,yR);c.stroke();c.setLineDash([]);
+ c.beginPath();c.moveTo(500,yR);c.lineTo(500,yL);c.moveTo(494,yR);c.lineTo(506,yR);c.moveTo(494,yL);c.lineTo(506,yL);c.lineWidth=2.5;c.stroke();
+ c.fillStyle=css('--ink');c.font='bold 15px '+FONT;c.textAlign='left';c.fillText('높이 차 Δh = '+Math.round(S.dh)+' mm',514,(yR+yL)/2+5);
+ c.fillText('대기압 760 mmHg',478,20);c.textAlign='center';c.fillText('▼ ▼ ▼',450,14);
+ c.fillText('수은 Hg',350,300);c.textAlign='right';c.fillText('갇힌 공기',212,yT+air/2+5);
+ if(S.pour){c.strokeStyle='#9aa4b5';c.lineWidth=5;c.beginPath();c.moveTo(S.sx,S.sy);c.lineTo(S.sx,yR);c.stroke()}
+ c.save();c.translate(S.fx,S.fy);c.rotate(S.tilt);
+ c.save();c.beginPath();c.rect(-30,-28,60,56);c.clip();c.rotate(-S.tilt);c.fillStyle='#9aa4b5';c.fillRect(-80,-4,160,120);c.restore();
+ c.fillStyle='rgba(156,184,216,.35)';c.fillRect(-30,-28,60,56);c.save();c.beginPath();c.rect(-30,-28,60,56);c.clip();c.rotate(-S.tilt);c.fillStyle='#9aa4b5';c.fillRect(-80,-4,160,120);c.restore();
+ c.strokeStyle=css('--ink');c.lineWidth=3;c.lineJoin='round';c.beginPath();c.moveTo(-40,-34);c.lineTo(-30,-28);c.lineTo(-30,28);c.lineTo(30,28);c.lineTo(30,-28);c.stroke();
+ c.restore();
+ c.textAlign='center';c.font='13px '+FONT;c.fillStyle=css('--mut');if(!drag)c.fillText('수은 병 (잡고 끌어요)',S.fx,S.fy+48);
+}
+
+function drawRoom(){
+ const c=ctx,x0=S.x0,y0=S.y0,H=S.H,tp=S.k==='temp';
+ c.fillStyle=css('--room');c.fillRect(x0,y0,S.wx-x0,H);
+ c.strokeStyle=css('--ink');c.lineWidth=4;c.strokeRect(x0,y0,S.wx-x0,H);
+ c.fillStyle=tp?css('--mut'):css('--acc2');c.fillRect(S.wx-2,y0-4,12,H+8);
+ c.textBaseline='middle';c.textAlign='center';c.fillStyle=css('--mut');c.font='13px '+FONT;
+ if(!tp){
+  c.fillStyle=css('--mut');c.fillRect(S.wx+10,y0+H/2-5,28,10);
+  c.fillStyle=css('--acc');c.fillRect(S.wx+38,y0+H/2-30,12,60);
+  c.fillStyle='#fff';for(let i=-1;i<=1;i++)c.fillRect(S.wx+41,y0+H/2+i*14-1,6,2);
+  c.fillStyle=css('--mut');c.fillText('◀ 오른쪽 손잡이를 끌어서 방 크기를 바꿔요 ▶',350,392);
+ }else{
+  c.fillText('← 바깥 공기가 일정한 힘으로 벽을 눌러요 (압력은 일정!)',260,10);for(let i=0;i<3;i++){const ay=y0+H*(i+1)/4;c.fillStyle=css('--acc');c.fillRect(S.wx+34,ay-3,26,6);c.beginPath();c.moveTo(S.wx+34,ay-9);c.lineTo(S.wx+22,ay);c.lineTo(S.wx+34,ay+9);c.fill()}
+  c.save();c.translate(40,0);const f=Math.max(0,Math.min(1,(S.T-170)/170)),col='hsl('+(220-220*f)+',85%,55%)';
+  c.strokeStyle=css('--ink');c.lineWidth=3;c.fillStyle=css('--line');c.fillRect(600,40,22,250);c.strokeRect(600,40,22,250);
+  c.fillStyle=col;c.fillRect(602,290-250*f,18,250*f);c.beginPath();c.arc(611,306,20,0,7);c.fill();c.stroke();
+  c.fillStyle=css('--ink');c.font='bold 16px '+FONT;c.fillText((S.T-273)+'°C',611,345);c.restore();
+  const n=Math.round(Math.abs(S.T-290)/60),e=S.T>=290?'🔥':'❄️';c.font='28px serif';
+  for(let i=0;i<n;i++)c.fillText(e,x0+S.W0/2+(i-(n-1)/2)*44,358);
+ }
+ const m=S.morph,r=10-3*m;
+ for(const p of items){
+  if(m<.98){c.globalAlpha=1-m;pix(c,(Math.floor((p.x+p.y)/9)&1)?PX2:PX,{h:p.h,s:'#f1c9a0',c:p.c,p:'#2b3a67'},p.x-7,p.y-10,2)}
+  if(m>.02){c.globalAlpha=m;c.fillStyle=tp?'hsl('+(220-220*Math.max(0,Math.min(1,(S.T-170)/170)))+',85%,55%)':css('--acc');
+   pix(c,BALL,{X:c.fillStyle,w:'rgba(255,255,255,.7)'},p.x-7.5,p.y-7.5,3)}
+  c.globalAlpha=1;
+ }
+ c.textBaseline='alphabetic';
+}
+
+function graph(xmin,xmax,ymin,ymax,fn,px,py,xl,yl){
+ const g=gx,w=300,h=220,l=46,r=12,t=14,b=38,X=x=>l+(x-xmin)/(xmax-xmin)*(w-l-r),Y=y=>h-b-(y-ymin)/(ymax-ymin)*(h-t-b);
+ g.clearRect(0,0,w,h);g.strokeStyle=css('--mut');g.lineWidth=1.5;g.beginPath();g.moveTo(l,t);g.lineTo(l,h-b);g.lineTo(w-r,h-b);g.stroke();
+ g.fillStyle=css('--mut');g.font='11px '+FONT;g.textAlign='center';g.fillText(xl,(l+w-r)/2,h-6);g.fillText(xmin,l,h-b+14);g.fillText(xmax,w-r-6,h-b+14);
+ g.textAlign='right';g.fillText(ymax,l-4,t+8);g.fillText(ymin,l-4,h-b);
+ g.save();g.translate(11,(t+h-b)/2);g.rotate(-Math.PI/2);g.textAlign='center';g.fillText(yl,0,0);g.restore();
+ g.strokeStyle=css('--acc');g.lineWidth=2.5;g.beginPath();
+ for(let i=0;i<=60;i++){const x=xmin+(xmax-xmin)*i/60,y=Math.min(ymax,fn(x));i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y))}g.stroke();
+ g.fillStyle=css('--acc2');g.beginPath();g.arc(X(Math.max(xmin,Math.min(xmax,px))),Y(Math.max(ymin,Math.min(ymax,py))),6,0,7);g.fill();
+}
+
+function ui(){
+ let V,P,bar;
+ if(S.k==='tube'){
+  P=760+S.dh;V=10*760/P;$('#s1').textContent=V.toFixed(1)+' mL';bar=P/1550;
+ }else{
+  P=S.pe/S.tau/S.H/S.P0;
+  if(S.k==='room'){V=(S.wx-S.x0)/48;$('#s1').textContent=V.toFixed(1)+' L';bar=P/5;}
+  else{$('#s1').textContent=(S.T-273)+' °C  →  '+((S.wx-S.x0)/48).toFixed(1)+' L';bar=P/2.2;}
+ }
+ bar=Math.max(0,Math.min(1,bar));$('#pb').style.width=bar*100+'%';$('#l2').textContent='압력 게이지 (벽을 미는 힘)';$('#s2').textContent=['아주 약해요','약해요','보통이에요','세요','아주 세요'][Math.min(4,Math.floor(bar*5))];
+}
+
+function px(e){const b=cv.getBoundingClientRect();return[(e.clientX-b.left)*CW/b.width,(e.clientY-b.top)*CH/b.height]}
+function mv(e){S.wx=Math.max(S.x0+140,Math.min(S.x0+620,px(e)[0]+off))}
+cv.onpointerdown=e=>{if(S.k==='tube'){const[x,y]=px(e);if(Math.abs(x-S.fx)<45&&Math.abs(y-S.fy)<45){drag=true;S.fox=S.fx-x;S.foy=S.fy-y;cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing'}return}if(S.k!=='room')return;const x=px(e)[0];if(x>S.wx-14){drag=true;off=S.wx-x;cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';mv(e)}};
+cv.onpointermove=e=>{if(S.k==='tube'){const[x,y]=px(e);if(drag){S.fx=Math.max(40,Math.min(660,x+S.fox));S.fy=Math.max(30,Math.min(370,y+S.foy))}else cv.style.cursor=Math.abs(x-S.fx)<45&&Math.abs(y-S.fy)<45?'grab':'default';return}if(S.k!=='room')return;if(drag)mv(e);else cv.style.cursor=px(e)[0]>S.wx-14?'ew-resize':'default'};
+cv.onpointerup=cv.onpointercancel=()=>{drag=false;cv.style.cursor='default'};
+
+let last=performance.now(),lu=0;
+function loop(now){
+ const dt=Math.min(.033,(now-last)/1000);last=now;
+ ctx.clearRect(0,0,CW,CH);
+ if(S.k==='tube'){stepTube(dt);drawTube()}else{stepRoom(dt);drawRoom()}
+ if(now-lu>120){ui();lu=now}
+ requestAnimationFrame(loop);
+}
+setup(0);requestAnimationFrame(loop);
+</script>
+</body>
+</html>
